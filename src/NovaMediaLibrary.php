@@ -3,6 +3,7 @@
 namespace ClassicO\NovaMediaLibrary;
 
 use ClassicO\NovaMediaLibrary\Core\Helper;
+use Illuminate\Http\Request;
 use Laravel\Nova\Nova;
 use Laravel\Nova\Tool;
 
@@ -73,4 +74,8 @@ class NovaMediaLibrary extends Tool
 		$json = json_decode(file_get_contents($file));
 		return is_object($json) ? $json : [];
 	}
+
+    public function menu(Request $request)
+    {
+    }
 }

@@ -22,38 +22,38 @@ class MediaLibrary extends Field
 	    return $item;
     }
 
-    public function resolve($resource, $attribute = null) {
-	    parent::resolve( $resource, $attribute );
-	    if ( !$this->value ) return $this->value = null;
+    public function resolve($resource, ?string $attribute = null): void {
+        parent::resolve( $resource, $attribute );
+        if ( !$this->value ) $this->value = null;
 
-	    $value = $this->value;
-	    $this->value = null;
-	    $data = Core\Model::find($value);
+        $value = $this->value;
+        $this->value = null;
+        $data = Core\Model::find($value);
 
-	    if ( is_array($value) ) {
-	    	if ( !count($data) ) return $this->value = null;
-		    $data = $data->keyBy('id');
-		    $this->value = [];
-		    foreach ($value as $i)
-		    	if ( isset($data[$i]) ) $this->value[] = $data[$i];
-	    } else {
-	    	if ( !$data ) return $this->value = null;
-		    $this->value = $data;
-	    }
+        if ( is_array($value) ) {
+            if ( !count($data) ) $this->value = null;
+            $data = $data->keyBy('id');
+            $this->value = [];
+            foreach ($value as $i)
+                if ( isset($data[$i]) ) $this->value[] = $data[$i];
+        } else {
+            if ( !$data ) $this->value = null;
+            $this->value = $data;
+        }
 
-	    $this->preview = array_key_exists('nmlPreview', $this->meta)
-		    ? $this->meta['nmlPreview'] : config('nova-media-library.resize.preview');
+        $this->preview = array_key_exists('nmlPreview', $this->meta)
+            ? $this->meta['nmlPreview'] : config('nova-media-library.resize.preview');
 
-	    if ( is_array($value) ) {
-		    $this->value = collect($this->value)->map(function ($item) {
-		    	return $this->privateUrl($item);
-		    });
-	    } else if ( $value ) {
-	    	$this->value = $this->privateUrl($this->value);
-	    }
+        if ( is_array($value) ) {
+            $this->value = collect($this->value)->map(function ($item) {
+                $this->privateUrl($item);
+            });
+        } else if ( $value ) {
+            $this->value = $this->privateUrl($this->value);
+        }
 
-	    if ( !$this->value )
-		    $this->value = null;
+        if ( !$this->value )
+            $this->value = null;
     }
 
 	protected function fillAttributeFromRequest(NovaRequest $request, $requestAttribute, $model, $attribute)
